@@ -1,10 +1,4 @@
-/* --------------------------------------------------------------------------
-   20_dml_star.sql ― заполняем измерения и факт; скрипт идемпотентен
-   -------------------------------------------------------------------------- */
-
 SET search_path TO dw, public;
-
--- ══════════════════════════════ ЗАПОЛНЯЕМ ИЗМЕРЕНИЯ ══════════════════════ --
 
 -- dim_customer -------------------------------------------------------------
 INSERT INTO dw.dim_customer
@@ -62,8 +56,6 @@ FROM   staging.pet_store_source
 WHERE  store_email IS NOT NULL
 ON CONFLICT (email) DO NOTHING;
 
--- ══════════════════════════════ ПЕРЕЗАГРУЖАЕМ ФАКТ ═══════════════════════ --
-
 TRUNCATE dw.fact_sales;
 
 INSERT INTO dw.fact_sales (
@@ -83,14 +75,12 @@ JOIN   dw.dim_customer AS c
   ON   LOWER(TRIM(c.email)) = LOWER(TRIM(t.customer_email))
 JOIN   dw.dim_pet AS p
   ON   p.name = t.customer_pet_name
- AND   p.type = t.customer_pet_type                -- убираем дубль имён
+ AND   p.type = t.customer_pet_type
 JOIN   dw.dim_product AS pr
   ON   pr.product_name  = t.product_name
- AND   pr.supplier_name = t.supplier_name          -- учитываем поставщика
+ AND   pr.supplier_name = t.supplier_name
 JOIN   dw.dim_store AS s
   ON   LOWER(TRIM(s.email)) = LOWER(TRIM(t.store_email));
-
--- ══════════════════════════════ ПОЛЕЗНЫЕ ИНДЕКСЫ ═════════════════════════ --
 
 CREATE INDEX IF NOT EXISTS idx_dim_customer_email
         ON dw.dim_customer (LOWER(TRIM(email)));

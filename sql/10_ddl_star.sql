@@ -1,10 +1,4 @@
-/* --------------------------------------------------------------------------
-   10_ddl_star.sql ― создаём схему dw и все таблицы
-   -------------------------------------------------------------------------- */
-
 CREATE SCHEMA IF NOT EXISTS dw;
-
--- ══════════════════════════════ ИЗМЕРЕНИЯ ════════════════════════════════ --
 
 -- ▸ dim_customer -----------------------------------------------------------
 CREATE TABLE IF NOT EXISTS dw.dim_customer (
@@ -12,7 +6,7 @@ CREATE TABLE IF NOT EXISTS dw.dim_customer (
     first_name    TEXT,
     last_name     TEXT,
     age           INT,
-    email         TEXT UNIQUE,   -- нужен для ON CONFLICT
+    email         TEXT UNIQUE,
     country       TEXT,
     postal_code   TEXT
 );
@@ -23,7 +17,7 @@ CREATE TABLE IF NOT EXISTS dw.dim_pet (
     name     TEXT,
     type     TEXT,
     breed    TEXT,
-    UNIQUE (name, type)          -- обеспечивает ON CONFLICT
+    UNIQUE (name, type)
 );
 
 -- ▸ dim_product ------------------------------------------------------------
@@ -37,21 +31,19 @@ CREATE TABLE IF NOT EXISTS dw.dim_product (
     colour         TEXT,
     price          NUMERIC(12,2),
     weight         NUMERIC(12,3),
-    UNIQUE (product_name, supplier_name)   -- для ON CONFLICT
+    UNIQUE (product_name, supplier_name)
 );
 
 -- ▸ dim_store --------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS dw.dim_store (
     store_key   BIGSERIAL PRIMARY KEY,
     store_name  TEXT,
-    email       TEXT UNIQUE,     -- уникальный бизнес-ключ
+    email       TEXT UNIQUE,
     city        TEXT,
     state       TEXT,
     country     TEXT,
     phone       TEXT
 );
-
--- ══════════════════════════════ ФАКТ ═════════════════════════════════════ --
 
 CREATE TABLE IF NOT EXISTS dw.fact_sales (
     sales_key    BIGSERIAL PRIMARY KEY,
