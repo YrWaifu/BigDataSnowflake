@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pet_dw
+    environment:
+      POSTGRES_DB: pet_dw
+      POSTGRES_USER: pet_admin
+      POSTGRES_PASSWORD: pet_admin
+      TZ: Europe/Moscow
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d
+      - ./data:/data
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pg_data:
